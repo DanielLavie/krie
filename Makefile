@@ -4,7 +4,7 @@ build-ebpf: build-ebpf-no-wrapper build-ebpf-syscall-wrapper generate
 
 build-ebpf-no-wrapper:
 	mkdir -p ebpf/bin
-	clang-14 -D__KERNEL__ -DCONFIG_64BIT -D__ASM_SYSREG_H -D__x86_64__ -D__BPF_TRACING__ -DKBUILD_MODNAME=\"krie\" \
+	clang -D__KERNEL__ -DCONFIG_64BIT -D__ASM_SYSREG_H -D__x86_64__ -D__BPF_TRACING__ -DKBUILD_MODNAME=\"krie\" \
 		-Wno-unused-value \
 		-Wno-pointer-sign \
 		-Wno-compare-distinct-pointer-types \
@@ -23,7 +23,7 @@ build-ebpf-no-wrapper:
 
 build-ebpf-syscall-wrapper:
 	mkdir -p ebpf/bin
-	clang-14 -D__KERNEL__ -DCONFIG_64BIT -D__ASM_SYSREG_H -D__x86_64__ -DUSE_SYSCALL_WRAPPER=1 -D__BPF_TRACING__ -DKBUILD_MODNAME=\"krie\" \
+	clang -D__KERNEL__ -DCONFIG_64BIT -D__ASM_SYSREG_H -D__x86_64__ -DUSE_SYSCALL_WRAPPER=1 -D__BPF_TRACING__ -DKBUILD_MODNAME=\"krie\" \
 		-Wno-unused-value \
 		-Wno-pointer-sign \
 		-Wno-compare-distinct-pointer-types \
@@ -42,7 +42,8 @@ build-ebpf-syscall-wrapper:
 
 generate:
 	go run github.com/shuLhan/go-bindata/cmd/go-bindata -pkg assets -prefix "ebpf/bin" -o "pkg/assets/probe.go" "ebpf/bin/probe_syscall_wrapper.o" "ebpf/bin/probe.o"
-	go generate ./...
+	# Didn't work for me for some reason but isn't relevent for the CO-RE POC
+	#go generate ./...
 
 build:
 	mkdir -p bin/

@@ -24,7 +24,7 @@ import (
 
 	manager "github.com/DataDog/ebpf-manager"
 	"github.com/mailru/easyjson/jwriter"
-	"golang.org/x/sys/unix"
+	//"golang.org/x/sys/unix"
 	"gopkg.in/yaml.v3"
 )
 
@@ -319,72 +319,90 @@ func AllProbesSelectors(events EventTypeList) []manager.ProbesSelector {
 
 // AllProbes returns all the probes
 func AllProbes(events EventTypeList) []*manager.Probe {
+
 	all := []*manager.Probe{
 		{
 			ProbeIdentificationPair: manager.ProbeIdentificationPair{
 				UID:          KRIEUID,
-				EBPFSection:  "tracepoint/raw_syscalls/sys_exit",
-				EBPFFuncName: "sys_exit",
+				EBPFSection:  "tracepoint/syscalls/sys_enter_mkdirat",
+				EBPFFuncName: "sys_enter_mkdirat",
 			},
 		},
 		{
-			ProbeIdentificationPair: manager.ProbeIdentificationPair{
-				UID:          KRIEUID,
-				EBPFSection:  "kprobe/prepare_kernel_cred",
-				EBPFFuncName: "kprobe_prepare_kernel_cred",
+		ProbeIdentificationPair: manager.ProbeIdentificationPair{
+			UID:          KRIEUID,
+			EBPFSection:  "tracepoint/my_tracepoint",
+			EBPFFuncName: "my_tracepoint",
 			},
-		},
-		{
-			ProbeIdentificationPair: manager.ProbeIdentificationPair{
-				UID:          KRIEUID,
-				EBPFSection:  "tracepoint/raw_syscalls/sys_enter_syscall",
-				EBPFFuncName: "sys_enter_syscall",
-			},
-			TracepointCategory: "raw_syscalls",
-			TracepointName:     "sys_enter",
-		},
-		{
-			ProbeIdentificationPair: manager.ProbeIdentificationPair{
-				UID:          KRIEUID,
-				EBPFSection:  "perf_event/syscall_table_ticker",
-				EBPFFuncName: "perf_event_syscall_table_ticker",
-			},
-			SampleFrequency: 1,
-			PerfEventType:   unix.PERF_TYPE_SOFTWARE,
-			PerfEventConfig: unix.PERF_COUNT_SW_CPU_CLOCK,
-		},
-		{
-			ProbeIdentificationPair: manager.ProbeIdentificationPair{
-				UID:          KRIEUID,
-				EBPFSection:  "perf_event/kernel_parameter_ticker",
-				EBPFFuncName: "perf_event_kernel_parameter_ticker",
-			},
-			SampleFrequency: 1,
-			PerfEventType:   unix.PERF_TYPE_SOFTWARE,
-			PerfEventConfig: unix.PERF_COUNT_SW_CPU_CLOCK,
 		},
 	}
 
-	if IsBPFLSMAvailable() {
-		addLSMProbes(&all)
-	}
+	// all := []*manager.Probe{
+	// 	{
+	// 		ProbeIdentificationPair: manager.ProbeIdentificationPair{
+	// 			UID:          KRIEUID,
+	// 			EBPFSection:  "tracepoint/raw_syscalls/sys_exit",
+	// 			EBPFFuncName: "sys_exit",
+	// 		},
+	// 	},
+	// 	{
+	// 		ProbeIdentificationPair: manager.ProbeIdentificationPair{
+	// 			UID:          KRIEUID,
+	// 			EBPFSection:  "kprobe/prepare_kernel_cred",
+	// 			EBPFFuncName: "kprobe_prepare_kernel_cred",
+	// 		},
+	// 	},
+	// 	{
+	// 		ProbeIdentificationPair: manager.ProbeIdentificationPair{
+	// 			UID:          KRIEUID,
+	// 			EBPFSection:  "tracepoint/raw_syscalls/sys_enter_syscall",
+	// 			EBPFFuncName: "sys_enter_syscall",
+	// 		},
+	// 		TracepointCategory: "raw_syscalls",
+	// 		TracepointName:     "sys_enter",
+	// 	},
+	// 	{
+	// 		ProbeIdentificationPair: manager.ProbeIdentificationPair{
+	// 			UID:          KRIEUID,
+	// 			EBPFSection:  "perf_event/syscall_table_ticker",
+	// 			EBPFFuncName: "perf_event_syscall_table_ticker",
+	// 		},
+	// 		SampleFrequency: 1,
+	// 		PerfEventType:   unix.PERF_TYPE_SOFTWARE,
+	// 		PerfEventConfig: unix.PERF_COUNT_SW_CPU_CLOCK,
+	// 	},
+	// 	{
+	// 		ProbeIdentificationPair: manager.ProbeIdentificationPair{
+	// 			UID:          KRIEUID,
+	// 			EBPFSection:  "perf_event/kernel_parameter_ticker",
+	// 			EBPFFuncName: "perf_event_kernel_parameter_ticker",
+	// 		},
+	// 		SampleFrequency: 1,
+	// 		PerfEventType:   unix.PERF_TYPE_SOFTWARE,
+	// 		PerfEventConfig: unix.PERF_COUNT_SW_CPU_CLOCK,
+	// 	},
+	// }
 
-	addKernelModuleProbes(&all, events)
-	if events.Contains(BPFEventType) {
-		addBPFProbes(&all)
-	}
-	if events.Contains(BPFFilterEventType) {
-		addSetSockOptProbes(&all)
-	}
-	if events.Contains(PTraceEventType) {
-		addPTraceProbes(&all)
-	}
-	if events.Contains(KProbeEventType) {
-		addKProbeProbes(&all)
-	}
-	if events.Contains(SysCtlEventType) {
-		addSysCtlProbes(&all)
-	}
+	// if IsBPFLSMAvailable() {
+	// 	addLSMProbes(&all)
+	// }
+
+	// addKernelModuleProbes(&all, events)
+	// if events.Contains(BPFEventType) {
+	// 	addBPFProbes(&all)
+	// }
+	// if events.Contains(BPFFilterEventType) {
+	// 	addSetSockOptProbes(&all)
+	// }
+	// if events.Contains(PTraceEventType) {
+	// 	addPTraceProbes(&all)
+	// }
+	// if events.Contains(KProbeEventType) {
+	// 	addKProbeProbes(&all)
+	// }
+	// if events.Contains(SysCtlEventType) {
+	// 	addSysCtlProbes(&all)
+	// }
 
 	return all
 }
