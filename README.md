@@ -1,3 +1,7 @@
+I'm trying to create a simple CO-RE POC.
+For that I'm trying to load the program in ebpf/main.c (an example tracepoint program) after the original program couldn't be loaded in my machines
+I've made some changes to the user mode code to be able to load this simple program
+
 ## KRIe
 
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
